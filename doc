@@ -1,0 +1,127 @@
+# EcoTecidos — Integração e Deploy
+
+**Projeto Final | Desenvolvedor Full Stack — +PraTi**
+
+O **EcoTecidos** é uma plataforma web para conectar pessoas que desejam descartar resíduos têxteis a pontos de coleta, incentivando economia circular, educação ambiental e benefícios por meio de cashback.
+
+## Acesso à aplicação
+
+**Site publicado:** https://ecotecidos-deploy.onrender.com
+
+> **Situação da publicação (10/11/2026):** o frontend foi disponibilizado no Render e passou por testes funcionais iniciais. Em verificações posteriores, rotas da API retornaram `502 Bad Gateway`; a disponibilidade integral do backend precisa ser confirmada antes da avaliação. O status `Live` do Render, isoladamente, não comprova a saúde da API.
+
+## Repositórios do projeto
+
+| Componente | Repositório |
+|---|---|
+| Frontend (React/Vite) | https://github.com/rafael-kuchla-flores/Descarte_Tecidos |
+| Backend (Java/Spring Boot) | https://github.com/lucastnsoares/ecotecidos-api |
+| Integração e deploy (Docker/Nginx) | https://github.com/brunasdr9412/ecotecidos-deploy |
+
+Este repositório concentra os arquivos de implantação. Os códigos de frontend e backend são mantidos nos respectivos repositórios de origem.
+
+## Funcionalidades contempladas
+
+Conforme a documentação do backend, a solução contempla:
+
+- Cadastro, autenticação JWT e autorização por perfis (`DOADOR`, `PONTO_COLETA_OPERADOR`, `PONTO_COLETA_GERENTE`, `ADMIN`).
+- Gestão e consulta de pontos de coleta, inclusive filtros e localização.
+- Solicitações de descarte e validação de entregas por operadores.
+- Carteira, créditos e resgates de cashback conforme regras de negócio.
+- Conteúdos educativos, favoritos e gestão de perfil.
+- Persistência de dados e migrações versionadas.
+
+A presença de uma funcionalidade na documentação não equivale a sua homologação integral no ambiente publicado.
+
+## Tecnologias e arquitetura
+
+| Camada | Tecnologias |
+|---|---|
+| Interface | React, Vite, JavaScript |
+| API | Java 21, Spring Boot 4, REST |
+| Segurança | Spring Security, JWT |
+| Persistência | PostgreSQL, JPA/Hibernate, Flyway |
+| Documentação da API | OpenAPI/Swagger UI |
+| Build e hospedagem | Docker multi-stage, Node.js, Maven, Nginx, Render |
+
+```text
+Navegador / HTTPS
+       |
+       v
+Render — Nginx :10000
+       |-- /             --> React (arquivos estáticos)
+       `-- /api/v1       --> Spring Boot :8080 --> PostgreSQL
+```
+
+O Dockerfile clona os repositórios de origem na fase de build, compila o frontend com `npm ci` e `npm run build`, empacota a API com Maven e entrega os arquivos estáticos pelo Nginx. A API é encaminhada pelo proxy reverso no caminho `/api/v1`.
+
+## Arquivos do repositório de deploy
+
+- `Dockerfile`: construção da imagem e inicialização dos serviços.
+- `nginx.conf`: entrega do frontend e proxy reverso para a API.
+- `start.sh`: script de inicialização e checagem de saúde, presente na versão consultada do repositório.
+- `README.md`: documentação desta integração.
+
+## Como executar os projetos localmente
+
+**Frontend:**
+
+```bash
+git clone https://github.com/rafael-kuchla-flores/Descarte_Tecidos.git
+cd Descarte_Tecidos/Descarte_Tecidos
+npm ci
+npm run dev
+```
+
+**Backend (Windows/PowerShell):**
+
+```powershell
+git clone https://github.com/lucastnsoares/ecotecidos-api.git
+cd ecotecidos-api
+.\mvnw.cmd spring-boot:run
+```
+
+Para iniciar o backend, configure previamente o PostgreSQL e as variáveis exigidas pelo README do repositório da API. No frontend, configure `VITE_API_URL` conforme o endereço do backend utilizado.
+
+## Configuração de produção
+
+As configurações do ambiente incluem `SPRING_PROFILES_ACTIVE`, `SERVER_PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `TOKEN_JWT_SECRET`, `FRONTEND_URL`, `API_SECURITY_CORS_ALLOWED_ORIGINS` e `SEED_ENABLED`.
+
+**Segurança:** não inclua valores reais de senhas, tokens, segredos ou arquivos `.env` no repositório nem no pacote de entrega.
+
+## Swagger e documentação da API
+
+A API utiliza OpenAPI/Swagger, documentado no repositório do backend. O Swagger foi utilizado durante o desenvolvimento e pode ser executado no ambiente local conforme as instruções e configurações do backend. O acesso público ao Swagger no Render não foi validado; não é necessário para consultar o código e a documentação da API no GitHub.
+
+## Testes e evidências
+
+**Verificações funcionais iniciais relatadas como concluídas:** abertura da página inicial, navegação, cadastro, login, persistência após atualização e operações de cadastro/consulta.
+
+**Pendências de validação:** execução e relatório dos testes automatizados, homologação integral dos fluxos por perfil e confirmação da saúde da API no Render. O build do backend usa `-DskipTests`; portanto, sucesso de build não demonstra aprovação dos testes.
+
+Para executar testes locais:
+
+```powershell
+# Backend, na pasta ecotecidos-api
+.\mvnw.cmd test
+```
+
+```bash
+# Frontend, na pasta Descarte_Tecidos/Descarte_Tecidos
+npm ci
+npm run test:run
+```
+
+Registre os resultados reais antes de afirmar que os testes foram aprovados.
+
+## Limitações da hospedagem
+
+A implantação utiliza um serviço gratuito do Render, sujeito a suspensão por inatividade e limites de recursos. O armazenamento local do contêiner não deve ser tratado como persistente. Como o Dockerfile busca as branches `main` dos repositórios de origem durante o build, um novo build pode incorporar alterações feitas por outros integrantes.
+
+## Entrega acadêmica
+
+Entregar os links dos três repositórios, o endereço da aplicação, esta documentação e o relatório PDF de apresentação do projeto. A organização das tarefas e evidências de planejamento constam no relatório de entrega, não neste README.
+
+---
+
+**EcoTecidos — projeto desenvolvido em equipe no programa +PraTi.**
